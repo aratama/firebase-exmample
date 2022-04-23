@@ -35,3 +35,5 @@ yarn-error.log*
 *.tsbuildinfo
 
 src/firebase-config.ts
+.firebaserc
+.firebase
