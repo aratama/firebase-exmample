@@ -24,7 +24,7 @@ const Add: NextPage = () => {
 
       <button
         onClick={async () => {
-          addTodoTask({ name, done: false });
+          await addTodoTask({ name, done: false });
           await router.push("/");
         }}
       >
