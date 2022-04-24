@@ -1,18 +1,31 @@
-import { addDoc, collection, doc, FirestoreDataConverter, QueryDocumentSnapshot, updateDoc } from "firebase/firestore";
+import { addDoc, collection, doc, FirestoreDataConverter, orderBy, query, QueryDocumentSnapshot, serverTimestamp, Timestamp, updateDoc } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { firestore } from "../firebase";
-import { TodoTask } from "../model/TodoTask";
+import * as z from "zod";
+
+const todoTaskSchema = z.object({
+  name: z.string(),
+  done: z.boolean(),
+  createdAt: z.union([z.date(), z.instanceof(Timestamp).transform((timestamp) => timestamp.toDate())]),
+});
+
+export type TodoTask = z.infer<typeof todoTaskSchema>;
 
 const TodoTaskConverter: FirestoreDataConverter<TodoTask> = {
   toFirestore: (task: TodoTask) => task,
-  fromFirestore: (snapshot: QueryDocumentSnapshot<TodoTask>) => snapshot.data(),
+  fromFirestore: (snapshot: QueryDocumentSnapshot<TodoTask>) => todoTaskSchema.parse(snapshot.data()),
 };
 
 export function useTodoTaskList() {
-  return useCollection(collection(firestore, "task").withConverter(TodoTaskConverter), { snapshotListenOptions: {} });
+  return useCollection(query(collection(firestore, "task").withConverter(TodoTaskConverter), orderBy("createdAt")));
 }
 
-export async function addTodoTask(task: TodoTask): Promise<void> {
+export async function addTodoTask(name: string): Promise<void> {
+  const task: TodoTask = {
+    name,
+    done: false,
+    createdAt: serverTimestamp() as unknown as Date,
+  };
   await addDoc(collection(firestore, "task").withConverter(TodoTaskConverter), task);
 }
 

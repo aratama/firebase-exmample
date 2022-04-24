@@ -5,7 +5,7 @@ import TaskList from "./component/TaskList";
 const Home: NextPage = () => {
   return (
     <div>
-      <Link href="/add">Add</Link>
+      <Link href="/add">タスクの追加</Link>
       <TaskList></TaskList>
     </div>
   );

@@ -7,20 +7,10 @@ export const app = initializeApp(firebaseConfig);
 
 export const firestore = getFirestore(app);
 
+// Detect which I'm on server-side or clicnt-side
+// https://stackoverflow.com/questions/49411796/how-do-i-detect-whether-i-am-on-server-on-client-in-next-js
 if (typeof window !== "undefined") {
   enableMultiTabIndexedDbPersistence(firestore).catch((err) => {
-    if (err.code == "failed-precondition") {
-      // Multiple tabs open, persistence can only be enabled
-      // in one tab at a a time.
-      // ...
-      console.warn("failed-precondition");
-    } else if (err.code == "unimplemented") {
-      // The current browser does not support all of the
-      // features required to enable persistence
-      // ...
-      console.warn("unimplemented");
-    } else {
-      console.warn("something happen");
-    }
+    console.warn("error in enableMultiTabIndexedDbPersistence:", err.code);
   });
 }

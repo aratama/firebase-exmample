@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { addTodoTask } from "../src/infrastructure/task";
-import styles from "../styles/Home.module.css";
+import styles from "../styles/Add.module.css";
 
 const Add: NextPage = () => {
   const [name, setName] = useState("");
@@ -14,22 +14,25 @@ const Add: NextPage = () => {
       <Link href="/">
         <a>戻る</a>
       </Link>
-
-      <input
-        value={name}
-        onInput={(e) => {
-          setName(e.currentTarget.value);
-        }}
-      ></input>
-
-      <button
-        onClick={async () => {
-          await addTodoTask({ name, done: false });
-          await router.push("/");
-        }}
-      >
-        追加
-      </button>
+      <div className={styles.inputItem}>
+        <label>タスクの名前</label>
+        <input
+          value={name}
+          onInput={(e) => {
+            setName(e.currentTarget.value);
+          }}
+        ></input>
+      </div>
+      <div className={styles.footer}>
+        <button
+          onClick={async () => {
+            await addTodoTask(name);
+            await router.push("/");
+          }}
+        >
+          タスクを追加する
+        </button>
+      </div>
     </div>
   );
 };
